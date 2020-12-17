@@ -45,6 +45,13 @@ export async function activate(context: ExtensionContext): Promise<void> {
             showing = false
         }
     });
+
+    events.on('BufEnter', async (bufnr) => {
+        if (terminal?.bufnr === bufnr) {
+            terminal.sendText("", false)
+            await workspace.nvim.command('startinsert');
+        }
+    });
 }
 
 async function toggle(): Promise<void> {
@@ -54,10 +61,6 @@ async function toggle(): Promise<void> {
       workspace.showMessage(`Create terminal failed`, 'error');
       return;
     }
-
-    // hack to make startinsert work
-    terminal.sendText("", false)
-    await workspace.nvim.command('startinsert');
   }
 
   if (showing) {
